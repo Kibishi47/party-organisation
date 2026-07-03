@@ -74,7 +74,8 @@ const apiMiddleware = () => ({
 export default defineConfig({
   server: {
     host: true, // Écouter sur tout le réseau local
-    port: 5173
+    port: 5173,
+    allowedHosts: true // Autoriser tous les hôtes pour le déploiement sur domaine Coolify
   },
   plugins: [
     qrcode(),
