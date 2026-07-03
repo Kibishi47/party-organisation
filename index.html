@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Soirée Orga — Gestion des Invités</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Header avec Titre et KPI -->
+      <header class="app-header">
+        <div class="brand">
+          <div class="logo-icon">🎉</div>
+          <div>
+            <h1>Soirée Orga</h1>
+            <p class="subtitle">Mon tableau de bord de saisie des réponses</p>
+          </div>
+        </div>
+        
+        <!-- KPI Dashboard -->
+        <div class="kpi-grid">
+          <div class="kpi-card" id="kpi-total-guests">
+            <div class="kpi-icon">👥</div>
+            <div class="kpi-content">
+              <span class="kpi-value" id="val-total-guests">0</span>
+              <span class="kpi-label">Total Invités</span>
+            </div>
+          </div>
+          
+          <div class="kpi-card" id="kpi-fier">
+            <div class="kpi-icon">🔥</div>
+            <div class="kpi-content">
+              <span class="kpi-value" id="val-fier">0</span>
+              <span class="kpi-label">Au Fier (15h)</span>
+            </div>
+          </div>
+          
+          <div class="kpi-card" id="kpi-diet-allergies">
+            <div class="kpi-icon">🥗</div>
+            <div class="kpi-content">
+              <span class="kpi-value" id="val-diet-allergies">0</span>
+              <span class="kpi-label">Régime / Allergies</span>
+            </div>
+          </div>
+          
+          <div class="kpi-card" id="kpi-lodging">
+            <div class="kpi-icon">⛺</div>
+            <div class="kpi-content">
+              <span class="kpi-value" id="val-lodging">0</span>
+              <span class="kpi-label">Dorment sur place</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Layout: Liste des invités -->
+      <main class="app-main">
+        <section class="list-section">
+          <div class="card-header list-header">
+            <div>
+              <h2>Liste des invités</h2>
+              <p>Suivi et modification des réponses reçues</p>
+            </div>
+            
+            <div class="list-actions">
+              <div class="search-box">
+                <input type="text" id="search-guest" placeholder="Rechercher un nom..." autocomplete="off" />
+              </div>
+              <button class="btn-primary btn-add-guest" id="btn-open-modal">
+                + Ajouter un invité
+              </button>
+            </div>
+          </div>
+          
+          <div class="list-container">
+            <div class="guests-list" id="guests-list">
+              <!-- Rempli dynamiquement en JS -->
+            </div>
+            
+            <div class="empty-state" id="empty-state">
+              <div class="empty-icon">✉️</div>
+              <h3>Aucun invité saisi</h3>
+              <p>Enregistrez les réponses de vos potes en cliquant sur le bouton ci-dessus.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+      
+      <!-- Modal Overlay (Masqué par défaut) -->
+      <div class="modal-overlay" id="guest-modal" aria-hidden="true">
+        <div class="modal-content">
+          <button class="modal-close" id="modal-close-btn" aria-label="Fermer le formulaire">&times;</button>
+          
+          <div class="card-header">
+            <h2 id="modal-title">Ajouter un invité</h2>
+            <p>Saisissez les réponses reçues (ex: via WhatsApp)</p>
+          </div>
+          
+          <form id="guest-form" novalidate>
+            <div class="form-group">
+              <label for="guest-name">Nom de l'invité</label>
+              <input type="text" id="guest-name" placeholder="Ex: Alexandre Martin" required autocomplete="off" />
+              <span class="error-message" id="error-name">Veuillez entrer un nom.</span>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="guest-late">Arrive en retard</label>
+                <select id="guest-late">
+                  <option value="Non" selected>Non</option>
+                  <option value="Oui">Oui (retard)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="guest-fier">Présence au Fier (15h)</label>
+                <select id="guest-fier">
+                  <option value="Oui">Oui</option>
+                  <option value="Non" selected>Non</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="guest-lodging">Dort sur place</label>
+                <select id="guest-lodging">
+                  <option value="Non" selected>Non</option>
+                  <option value="Equipe">Oui (a son équipement)</option>
+                  <option value="Besoin">Oui (besoin d'un couchage / n'a rien)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="guest-diet">Régime alimentaire</label>
+                <select id="guest-diet">
+                  <option value="Aucun">Aucun</option>
+                  <option value="Végé">Végétarien (Végé)</option>
+                  <option value="Vegan">Végan</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="guest-allergies">Allergies (facultatif)</label>
+                <input type="text" id="guest-allergies" placeholder="Ex: Gluten, Arachides..." autocomplete="off" />
+              </div>
+
+              <div class="form-group">
+                <label for="guest-alcohol">Alcool / Boisson souhaitée</label>
+                <input type="text" id="guest-alcohol" placeholder="Ex: Bière blonde, Soft, Gin..." autocomplete="off" />
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-submit">
+                <span id="btn-submit-text">Ajouter l'invité</span>
+              </button>
+              <button type="button" id="btn-modal-delete" class="btn-delete" style="display: none;">
+                Supprimer l'invité
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
