@@ -14,7 +14,7 @@ const guestNameInput = document.getElementById('guest-name');
 const guestLateSelect = document.getElementById('guest-late');
 const guestFierSelect = document.getElementById('guest-fier');
 const guestLodgingSelect = document.getElementById('guest-lodging');
-const guestDietSelect = document.getElementById('guest-diet');
+const guestDietInput = document.getElementById('guest-diet');
 const guestAllergiesInput = document.getElementById('guest-allergies');
 const guestAlcoholInput = document.getElementById('guest-alcohol');
 
@@ -86,7 +86,7 @@ function updateKPIs() {
 
   // 3. Nombre de personnes ayant un régime ou des allergies
   const totalDietAllergies = activeGuests
-    .filter(g => g.diet !== 'Aucun' || (g.allergies && g.allergies.trim() !== '')).length;
+    .filter(g => (g.diet && g.diet.trim() !== '') || (g.allergies && g.allergies.trim() !== '')).length;
 
   // 4. Nombre de personnes dormant sur place (équipés + besoin) et détails de ceux qui ont besoin
   const totalLodging = activeGuests.filter(g => g.lodging === 'Equipe' || g.lodging === 'Besoin').length;
@@ -139,7 +139,7 @@ function openModal(isEdit = false) {
     guestLateSelect.value = 'Non';
     guestFierSelect.value = 'Non';
     guestLodgingSelect.value = 'Non';
-    guestDietSelect.value = 'Aucun';
+    guestDietInput.value = '';
   }
   
   guestModal.classList.add('open');
@@ -175,7 +175,7 @@ function handleEditGuest(id) {
   guestLateSelect.value = guest.late || 'Non';
   guestFierSelect.value = guest.fier || 'Non';
   guestLodgingSelect.value = guest.lodging || 'Non';
-  guestDietSelect.value = guest.diet || 'Aucun';
+  guestDietInput.value = guest.diet || '';
   guestAllergiesInput.value = guest.allergies || '';
   guestAlcoholInput.value = guest.alcohol || '';
 
@@ -254,13 +254,8 @@ function renderGuests() {
       lodgingBadgeHtml = '<span class="detail-badge-active-alert">⛺ À loger</span>';
     }
 
-    // Régime
-    let dietBadgeHtml = '';
-    if (guest.diet === 'Végé') {
-      dietBadgeHtml = '<span class="diet-tag diet-vege">Végé</span>';
-    } else if (guest.diet === 'Vegan') {
-      dietBadgeHtml = '<span class="diet-tag diet-vegan">Vegan</span>';
-    }
+    // Régime (texte libre générique)
+    const dietBadgeHtml = (guest.diet && guest.diet.trim()) ? `<span class="diet-tag" style="background-color:rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color:var(--text-muted); font-size:0.75rem;">${escapeHtml(guest.diet)}</span>` : '';
 
     // Allergies
     const allergiesBadgeHtml = (guest.allergies && guest.allergies.trim()) ? `<span class="allergies-tag">⚠️ Allergie: ${escapeHtml(guest.allergies)}</span>` : '';
@@ -328,7 +323,7 @@ guestForm.addEventListener('submit', async function(e) {
     name: nameValue,
     late: guestLateSelect.value,
     fier: guestFierSelect.value,
-    diet: guestDietSelect.value,
+    diet: guestDietInput.value.trim(),
     allergies: guestAllergiesInput.value.trim(),
     lodging: guestLodgingSelect.value,
     alcohol: guestAlcoholInput.value.trim()
