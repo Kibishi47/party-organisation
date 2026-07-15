@@ -4,6 +4,7 @@ import './style.css';
 // Initialisation de l'état
 const state = {
   guests: [],
+  notes: '',
   searchQuery: '',
   editingGuestId: null // stocke l'ID de l'invité en cours d'édition, ou null si création
 };
@@ -21,6 +22,7 @@ const guestAlcoholInput = document.getElementById('guest-alcohol');
 const searchInput = document.getElementById('search-guest');
 const guestsList = document.getElementById('guests-list');
 const emptyState = document.getElementById('empty-state');
+const generalNotesInput = document.getElementById('general-notes');
 
 // Modal Elements
 const guestModal = document.getElementById('guest-modal');
@@ -43,12 +45,26 @@ async function loadGuests() {
   try {
     const response = await fetch('/api/guests');
     if (response.ok) {
-      state.guests = await response.json();
+      const data = await response.json();
+      
+      // Rétrocompatibilité : si c'est un tableau simple, on le convertit
+      if (Array.isArray(data)) {
+        state.guests = data;
+        state.notes = '';
+      } else {
+        state.guests = data.guests || [];
+        state.notes = data.notes || '';
+      }
+      
+      // Remplir la zone de texte des notes
+      if (document.activeElement !== generalNotesInput) {
+        generalNotesInput.value = state.notes;
+      }
     } else {
-      console.error('Erreur serveur lors du chargement des invités');
+      console.error('Erreur serveur lors du chargement des données');
     }
   } catch (e) {
-    console.error('Erreur réseau lors du chargement des invités:', e);
+    console.error('Erreur réseau lors du chargement des données:', e);
   }
 }
 
@@ -62,7 +78,10 @@ async function saveGuests() {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(state.guests)
+      body: JSON.stringify({
+        guests: state.guests,
+        notes: state.notes
+      })
     });
     if (!response.ok) {
       console.error('Erreur serveur lors de la sauvegarde');
@@ -357,6 +376,12 @@ guestNameInput.addEventListener('input', () => {
   if (guestNameInput.value.trim()) {
     guestForm.querySelector('.form-group').classList.remove('has-error');
   }
+});
+
+// Écouteur de sauvegarde automatique pour les notes générales
+generalNotesInput.addEventListener('blur', async () => {
+  state.notes = generalNotesInput.value;
+  await saveGuests();
 });
 
 // Écouteur de suppression du Modal
