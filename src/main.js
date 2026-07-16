@@ -1,5 +1,6 @@
 // Outil d'organisation de soirée - Logique applicative
 import './style.css';
+import Sortable from 'sortablejs';
 
 // Initialisation de l'état
 const state = {
@@ -304,7 +305,10 @@ function renderGuests() {
     `;
 
     // Écouteur pour le bouton Modifier généré
-    item.querySelector('.btn-action-edit').addEventListener('click', () => handleEditGuest(guest.id));
+    item.querySelector('.btn-action-edit').addEventListener('click', (e) => {
+      e.stopPropagation(); // Évite de déclencher le drag/click de SortableJS
+      handleEditGuest(guest.id);
+    });
 
     guestsList.appendChild(item);
   });
@@ -428,4 +432,39 @@ window.addEventListener('DOMContentLoaded', async () => {
   await loadGuests();
   updateKPIs();
   renderGuests();
+
+  // Initialisation du tri glisser-déposer (Drag & Drop) sans handle
+  new Sortable(guestsList, {
+    animation: 150,
+    ghostClass: 'sortable-ghost',
+    chosenClass: 'sortable-chosen',
+    dragClass: 'sortable-drag',
+    onEnd: async function (evt) {
+      if (evt.oldIndex === evt.newIndex) return;
+
+      // Récupère l'ordre des éléments dans le DOM actuel
+      const itemEls = Array.from(guestsList.querySelectorAll('.guest-item'));
+      
+      // Reconstruction de state.guests en fonction de l'ordre réel des IDs dans le DOM
+      const newGuestsOrder = [];
+      itemEls.forEach(el => {
+        const guestId = el.dataset.id;
+        const guest = state.guests.find(g => g.id === guestId);
+        if (guest) {
+          newGuestsOrder.push(guest);
+        }
+      });
+
+      // Inclure les éléments non visibles (au cas où un filtre de recherche est actif)
+      state.guests.forEach(guest => {
+        if (!newGuestsOrder.find(g => g.id === guest.id)) {
+          newGuestsOrder.push(guest);
+        }
+      });
+
+      state.guests = newGuestsOrder;
+      await saveGuests();
+      renderGuests();
+    }
+  });
 });

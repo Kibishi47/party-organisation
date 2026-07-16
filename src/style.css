@@ -237,6 +237,8 @@ body.modal-open {
   border-bottom: 1px solid var(--border-color);
   transition: background-color var(--transition);
   gap: 0.4rem;
+  cursor: grab;
+  user-select: none;
 }
 
 .guest-item:last-child {
@@ -245,6 +247,26 @@ body.modal-open {
 
 .guest-item:hover {
   background-color: rgba(255, 255, 255, 0.01);
+}
+
+.guest-item:active {
+  cursor: grabbing;
+}
+
+/* DRAG & DROP SORTABLEJS */
+.sortable-ghost {
+  opacity: 0.4;
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  border-style: dashed !important;
+}
+
+.sortable-chosen {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.sortable-drag {
+  opacity: 0.8;
+  cursor: grabbing;
 }
 
 /* Ligne principale de l'invité */
