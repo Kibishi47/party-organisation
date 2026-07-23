@@ -189,7 +189,7 @@ body.modal-open {
   color: var(--text-main);
   padding: 0.65rem 0.85rem;
   font-family: var(--font-sans);
-  font-size: 0.9rem;
+  font-size: 1rem;
   outline: none;
   width: 100%;
 }
@@ -511,7 +511,7 @@ select {
   color: var(--text-main);
   padding: 0.65rem 0.85rem;
   font-family: var(--font-sans);
-  font-size: 0.9rem;
+  font-size: 1rem;
   outline: none;
   width: 100%;
   transition: border-color var(--transition);
@@ -722,7 +722,7 @@ input::placeholder {
   color: var(--text-main);
   padding: 0.75rem;
   font-family: var(--font-sans);
-  font-size: 0.95rem;
+  font-size: 1rem;
   resize: vertical;
   outline: none;
   line-height: 1.5;
