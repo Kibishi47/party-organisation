@@ -439,6 +439,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     ghostClass: 'sortable-ghost',
     chosenClass: 'sortable-chosen',
     dragClass: 'sortable-drag',
+    delay: 300, // Temps de maintien nécessaire (300ms) pour démarrer le drag
+    delayOnTouchOnly: true, // Appliquer le délai uniquement sur écran tactile (pour scroller sans trier)
     onEnd: async function (evt) {
       if (evt.oldIndex === evt.newIndex) return;
 
